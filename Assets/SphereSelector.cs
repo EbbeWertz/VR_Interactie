@@ -14,6 +14,10 @@ public class SphereSelector : MonoBehaviour
     [Tooltip("The minimum distance the sphere must move before re-checking selection.")]
     public float movementThreshold = 0.1f; 
 
+    [Header("UI Integration")]
+    [Tooltip("Reference to the Selection UI Manager for updating the list.")]
+    public SelectionUIManager uiManager;
+
     // Internal tracking variables
     private Dictionary<Renderer, Material[]> originalMaterials = new Dictionary<Renderer, Material[]>();
     private Vector3 lastPosition;
@@ -69,7 +73,7 @@ public class SphereSelector : MonoBehaviour
     }
         
     /// <summary>
-    /// Updates the display by resetting the old selection and highlighting the new one.
+    /// Updates the display by resetting the old selection, highlighting the new one, and updating the UI.
     /// </summary>
     public void UpdateSelectionDisplay()
     {
@@ -79,6 +83,11 @@ public class SphereSelector : MonoBehaviour
         // 2. Get the new selection
         List<GameObject> currentSelection = SelectObjectsInSphere();
         LogSelectionToConsole(currentSelection);
+        
+        if (uiManager != null)
+        {
+            uiManager.UpdateExplorerList();
+        }
         
         // 3. Highlight the selected objects
         foreach (GameObject obj in currentSelection)
