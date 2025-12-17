@@ -11,6 +11,7 @@ public class SphereGroupsSelector : MonoBehaviour
     [Header("Selection Settings")]
     public float selectionRadius = 3f;
     public float movementThreshold = 0.1f;
+    public KeyCode lockKey = KeyCode.Space;
 
     [Header("UI Integration")]
     // PAS OP: Verander dit naar UIGroups als je bestand zo heet!
@@ -19,6 +20,8 @@ public class SphereGroupsSelector : MonoBehaviour
     private Dictionary<GameObject, Color> originalColors = new Dictionary<GameObject, Color>();
     private Vector3 lastPosition;
     private float lastRadius;
+
+    private Transform lockedRoot = null;
 
     private void Start()
     {
@@ -57,15 +60,36 @@ public class SphereGroupsSelector : MonoBehaviour
         if (Input.GetKey(KeyCode.O)) selectionRadius += scaleSpeed * Time.deltaTime;
         if (Input.GetKey(KeyCode.P)) selectionRadius -= scaleSpeed * Time.deltaTime;
         selectionRadius = Mathf.Max(minRadius, selectionRadius);
-    }
 
+        // --- LOCKING LOGIC ---
+        // Inside HandleInput(), update the lock logic:
+        if (Input.GetKeyDown(lockKey))
+        {
+            if (lockedRoot != null)
+            {
+                lockedRoot = null;
+            }
+            else
+            {
+                List<GameObject> currentInSphere = GetObjectsInSphere(true); 
+                if (currentInSphere.Count > 0)
+                {
+                    // Use the new method here
+                    lockedRoot = FindGroupRoot(currentInSphere[0].transform);
+                    Debug.Log("Locked to Group: " + lockedRoot.name);
+                }
+            }
+            UpdateSelectionDisplay();
+        }
+    }
+    
     private void UpdateSphereVisuals() => transform.localScale = Vector3.one * (selectionRadius * 2);
 
     public void UpdateSelectionDisplay()
     {
         ResetHighlighting();
         
-        HashSet<GameObject> objectsInSphere = new HashSet<GameObject>(GetObjectsInSphere());
+        HashSet<GameObject> objectsInSphere = new HashSet<GameObject>(GetObjectsInSphere(false));
         HashSet<GameObject> completedObjects = new HashSet<GameObject>();
         HashSet<GameObject> missingRequiredObjects = new HashSet<GameObject>();
 
@@ -87,6 +111,9 @@ public class SphereGroupsSelector : MonoBehaviour
         
         while (current != null)
         {
+            // Stop processing if we hit a parent that is NOT our locked root
+            if (lockedRoot != null && !current.IsChildOf(lockedRoot)) break;
+
             bool allChildrenInSphere = true;
             List<GameObject> currentMissing = new List<GameObject>();
             
@@ -107,7 +134,7 @@ public class SphereGroupsSelector : MonoBehaviour
 
             if (allChildrenInSphere)
             {
-                Color targetColor = (current.parent == null) ? Color.black : Color.green;
+                Color targetColor = (current.parent == null || current == lockedRoot) ? Color.black : Color.green;
                 ApplyHighlight(current.gameObject, targetColor);
                 completed.Add(current.gameObject);
 
@@ -136,17 +163,48 @@ public class SphereGroupsSelector : MonoBehaviour
         }
     }
 
-    private List<GameObject> GetObjectsInSphere()
+    private List<GameObject> GetObjectsInSphere(bool ignoreLock)
     {
         List<GameObject> results = new List<GameObject>();
         Collider[] hits = Physics.OverlapSphere(transform.position, selectionRadius);
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
+
+            if (!ignoreLock && lockedRoot != null)
+            {
+                if (!hit.transform.IsChildOf(lockedRoot)) continue;
+            }
+
             if (IsMeshCompletelyContained(hit.gameObject, transform.position, selectionRadius))
                 results.Add(hit.gameObject);
         }
         return results;
+    }
+
+    // Helper to find the top-level parent of a group
+    private Transform FindHighestParent(Transform child)
+    {
+        Transform current = child;
+        while (current.parent != null)
+        {
+            current = current.parent;
+        }
+        return current;
+    }
+
+    private Transform FindGroupRoot(Transform child)
+    {
+        Transform current = child;
+    
+        // We climb up the ladder as long as there is a "Grandparent".
+        // This ensures we stop at the child of the absolute root.
+        while (current.parent != null && current.parent.parent != null)
+        {
+            current = current.parent;
+        }
+    
+        return current;
     }
 
     private void ApplyHighlight(GameObject obj, Color color)

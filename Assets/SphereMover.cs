@@ -101,7 +101,7 @@ public class SphereMover : MonoBehaviour
             sphereSelector.selectionRadius = currentRadius;
             Debug.Log($"Updated Sphere Radius to: {currentRadius}");
             
-            // NOTE: Because your SphereSelector has an OnValidate() or similar code 
+            // NOTE: Because your SphereSelector has an OnValidate() 
             // that links 'selectionRadius' to 'transform.localScale', 
             // the visual scale and the selection check will update automatically!
         }
