@@ -1,7 +1,8 @@
 using UnityEngine;
 
 public class SphereMover : MonoBehaviour
-{
+{   
+    [Header("Movement Control")]
     [Tooltip("Movement speed in Unity units per second.")]
     public float speed = 10f;
 
@@ -20,6 +21,35 @@ public class SphereMover : MonoBehaviour
     [Tooltip("Key for moving along the Negative Y-axis (Down).")]
     public KeyCode moveDown = KeyCode.A;
 
+    [Header("Radius Control")]
+    [Tooltip("Rate at which the radius changes per second.")]
+    public float scaleSpeed = 5f;
+
+    [Tooltip("Key to increase the sphere's radius.")]
+    public KeyCode increaseRadiusKey = KeyCode.O; // Or KeyCode.KeypadPlus
+    
+    [Tooltip("Key to decrease the sphere's radius.")]
+    public KeyCode decreaseRadiusKey = KeyCode.P; // Or KeyCode.KeypadMinus
+
+    [Tooltip("The minimum allowed radius.")]
+    public float minRadius = 1f;
+    
+    private SphereSelector sphereSelector;
+    private float currentRadius;
+
+    private void Start()
+    {
+        // Get a reference to the SphereSelector script to access the radius variable
+        sphereSelector = GetComponent<SphereSelector>();
+        if (sphereSelector == null)
+        {
+            Debug.LogError("SphereMover requires a SphereSelector component on the same GameObject!");
+            enabled = false;
+        }
+        
+        // Initialize the current radius from the selector
+        currentRadius = sphereSelector.selectionRadius;
+    }
     private void Update()
     {
         Vector3 moveDirection = Vector3.zero;
@@ -48,5 +78,32 @@ public class SphereMover : MonoBehaviour
 
         // Apply movement using Time.deltaTime for frame rate independence
         transform.position += moveDirection * speed * Time.deltaTime;
+
+        // 2. Handle Radius Scaling
+        float scaleChange = 0f;
+        
+        if (Input.GetKey(increaseRadiusKey))
+        {
+            scaleChange += scaleSpeed * Time.deltaTime;
+        }
+        if (Input.GetKey(decreaseRadiusKey))
+        {
+            scaleChange -= scaleSpeed * Time.deltaTime;
+        }
+
+        // Apply scaling change if any key was pressed
+        if (scaleChange != 0f)
+        {
+            // Calculate new radius, clamping it to the minimum value
+            currentRadius = Mathf.Max(minRadius, currentRadius + scaleChange);
+
+            // Update the public variable on the SphereSelector script
+            sphereSelector.selectionRadius = currentRadius;
+            Debug.Log($"Updated Sphere Radius to: {currentRadius}");
+            
+            // NOTE: Because your SphereSelector has an OnValidate() or similar code 
+            // that links 'selectionRadius' to 'transform.localScale', 
+            // the visual scale and the selection check will update automatically!
+        }
     }
 }

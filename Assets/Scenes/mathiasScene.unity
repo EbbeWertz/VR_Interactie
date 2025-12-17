@@ -1777,6 +1777,10 @@ MonoBehaviour:
   moveBackward: 115
   moveUp: 101
   moveDown: 97
+  scaleSpeed: 10
+  increaseRadiusKey: 111
+  decreaseRadiusKey: 112
+  minRadius: 1
 --- !u!64 &1667183080
 MeshCollider:
   m_ObjectHideFlags: 0
