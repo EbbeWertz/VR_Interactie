@@ -23,6 +23,8 @@ public class OVRSphereSelector : MonoBehaviour
     [Header("UI Integration")]
     public Uigroups uiManager; 
 
+    private int lastCompletedIndex = 0;
+
     private Dictionary<GameObject, Color> originalColors = new Dictionary<GameObject, Color>();
     private Vector3 lastPosition;
     private float lastRadius;
@@ -79,13 +81,24 @@ public class OVRSphereSelector : MonoBehaviour
         {
             if (lastCompletedList.Count > 0)
             {
-                TriggerSelection(lastCompletedList[0]);
-                
+                lastCompletedIndex = Mathf.Clamp(lastCompletedIndex, 0, lastCompletedList.Count - 1);
+
+                // Select current item
+                TriggerSelection(lastCompletedList[lastCompletedIndex]);
+
+                // Move to next item (wrap around)
+                lastCompletedIndex++;
+                if (lastCompletedIndex >= lastCompletedList.Count)
+                {
+                    lastCompletedIndex = 0;
+                }
+
                 // Haptic feedback
                 OVRInput.SetControllerVibration(0.5f, 0.5f, sphereController);
-                Invoke("StopVibration", 0.1f);
+                Invoke(nameof(StopVibration), 0.1f);
             }
         }
+
     }
 
     private void StopVibration()
@@ -96,14 +109,8 @@ public class OVRSphereSelector : MonoBehaviour
     private void TriggerSelection(GameObject target)
     {
         // Multimodale Feedback: Trilling
-        if (enableVibration)
-        {
-#if UNITY_ANDROID || UNITY_IOS
-            Handheld.Vibrate();
-#endif
-            // Voor PC/Editor met controllers zou je hier de InputSystem Haptics kunnen aanroepen
-        }
-
+        ResetHighlighting();
+        ApplyHighlightToHierarchy(target, Color.black);
         Debug.Log("<color=orange>Selectie bevestigd voor: " + target.name + "</color>");
     }
     
@@ -137,7 +144,7 @@ public class OVRSphereSelector : MonoBehaviour
                 if (IsTransformComplete(child, objectsInSphere))
                 {
                     completedForUI.Add(child.gameObject);
-                    ApplyHighlightToHierarchy(child.gameObject, Color.black);
+                    ApplyHighlightToHierarchy(child.gameObject, Color.green);
                 }
                 else
                 {
@@ -150,7 +157,7 @@ public class OVRSphereSelector : MonoBehaviour
         else
         {
             completedForUI.Add(activeLevel.gameObject);
-            ApplyHighlightToHierarchy(activeLevel.gameObject, Color.black);
+            ApplyHighlightToHierarchy(activeLevel.gameObject, Color.green);
         }
 
         // Update de interne lijst voor de spatiebalk-actie
@@ -228,8 +235,8 @@ public class OVRSphereSelector : MonoBehaviour
         if (!originalColors.ContainsKey(obj)) originalColors[obj] = r.material.color;
         
         if (color == Color.black) { r.material.color = Color.black; }
-        else if (color == Color.green) { if (r.material.color != Color.black) r.material.color = Color.green; }
-        else if (color == Color.red) { if (r.material.color != Color.black && r.material.color != Color.green) r.material.color = Color.red; }
+        else if (color == Color.green) { if (r.material.color != Color.green) r.material.color = Color.green; }
+        else if (color == Color.red) { if (r.material.color != Color.green && r.material.color != Color.green) r.material.color = Color.red; }
     }
 
     public void ResetHighlighting()
