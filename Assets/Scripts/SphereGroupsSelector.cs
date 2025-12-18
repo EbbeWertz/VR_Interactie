@@ -13,15 +13,16 @@ public class SphereGroupsSelector : MonoBehaviour
     public float movementThreshold = 0.1f;
     public KeyCode lockKey = KeyCode.Space;
 
+    [Header("Selected")]
+    public bool enableVibration = true;
+
     [Header("UI Integration")]
-    // PAS OP: Verander dit naar UIGroups als je bestand zo heet!
     public Uigroups uiManager; 
 
     private Dictionary<GameObject, Color> originalColors = new Dictionary<GameObject, Color>();
     private Vector3 lastPosition;
     private float lastRadius;
-
-    private Transform lockedRoot = null;
+    private List<GameObject> lastCompletedList = new List<GameObject>();
 
     private void Start()
     {
@@ -35,7 +36,6 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         HandleInput();
 
-        // Check of we moeten updaten
         if (Vector3.Distance(transform.position, lastPosition) >= movementThreshold || Mathf.Abs(selectionRadius - lastRadius) > 0.01f)
         {
             lastPosition = transform.position;
@@ -61,26 +61,28 @@ public class SphereGroupsSelector : MonoBehaviour
         if (Input.GetKey(KeyCode.P)) selectionRadius -= scaleSpeed * Time.deltaTime;
         selectionRadius = Mathf.Max(minRadius, selectionRadius);
 
-        // --- LOCKING LOGIC ---
-        // Inside HandleInput(), update the lock logic:
+        // --- SELECTIE VIA SPATIEBALK ---
         if (Input.GetKeyDown(lockKey))
         {
-            if (lockedRoot != null)
+            if (lastCompletedList.Count > 0)
             {
-                lockedRoot = null;
+                TriggerSelection(lastCompletedList[0]);
             }
-            else
-            {
-                List<GameObject> currentInSphere = GetObjectsInSphere(true); 
-                if (currentInSphere.Count > 0)
-                {
-                    // Use the new method here
-                    lockedRoot = FindGroupRoot(currentInSphere[0].transform);
-                    Debug.Log("Locked to Group: " + lockedRoot.name);
-                }
-            }
-            UpdateSelectionDisplay();
         }
+    }
+
+    private void TriggerSelection(GameObject target)
+    {
+        // Multimodale Feedback: Trilling
+        if (enableVibration)
+        {
+#if UNITY_ANDROID || UNITY_IOS
+            Handheld.Vibrate();
+#endif
+            // Voor PC/Editor met controllers zou je hier de InputSystem Haptics kunnen aanroepen
+        }
+
+        Debug.Log("<color=orange>Selectie bevestigd voor: " + target.name + "</color>");
     }
     
     private void UpdateSphereVisuals() => transform.localScale = Vector3.one * (selectionRadius * 2);
@@ -89,122 +91,112 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         ResetHighlighting();
         
-        HashSet<GameObject> objectsInSphere = new HashSet<GameObject>(GetObjectsInSphere(false));
-        HashSet<GameObject> completedObjects = new HashSet<GameObject>();
-        HashSet<GameObject> missingRequiredObjects = new HashSet<GameObject>();
-
-        foreach (GameObject obj in objectsInSphere)
+        List<GameObject> allDetected = GetObjectsInSphere();
+        if (allDetected.Count == 0)
         {
-            ProcessHierarchy(obj, objectsInSphere, completedObjects, missingRequiredObjects);
+            lastCompletedList.Clear();
+            if (uiManager != null) uiManager.UpdateExplorerList(new List<GameObject>(), new List<GameObject>());
+            return;
         }
+
+        HashSet<GameObject> objectsInSphere = new HashSet<GameObject>(allDetected);
+        List<GameObject> completedForUI = new List<GameObject>();
+        List<GameObject> missingForUI = new List<GameObject>();
+
+        // Focus bepalen op basis van de hiërarchie
+        Transform firstObj = allDetected[0].transform;
+        Transform activeLevel = GetHighestCompleteLevel(firstObj, objectsInSphere);
+        Transform parentOfLevel = activeLevel.parent;
+
+        if (parentOfLevel != null)
+        {
+            foreach (Transform child in parentOfLevel)
+            {
+                if (IsTransformComplete(child, objectsInSphere))
+                {
+                    completedForUI.Add(child.gameObject);
+                    ApplyHighlightToHierarchy(child.gameObject, Color.black);
+                }
+                else
+                {
+                    missingForUI.Add(child.gameObject);
+                    ApplyHighlightToHierarchy(child.gameObject, Color.red);
+                    HighlightDetectedSubObjects(child, objectsInSphere);
+                }
+            }
+        }
+        else
+        {
+            completedForUI.Add(activeLevel.gameObject);
+            ApplyHighlightToHierarchy(activeLevel.gameObject, Color.black);
+        }
+
+        // Update de interne lijst voor de spatiebalk-actie
+        lastCompletedList = new List<GameObject>(completedForUI);
 
         if (uiManager != null)
         {
-            // Zorg dat deze methode in UIGroups bestaat met 2 lijsten als parameters
-            uiManager.UpdateExplorerList(new List<GameObject>(completedObjects), new List<GameObject>(missingRequiredObjects));
+            uiManager.UpdateExplorerList(completedForUI, missingForUI);
         }
     }
 
-    private void ProcessHierarchy(GameObject obj, HashSet<GameObject> inSphere, HashSet<GameObject> completed, HashSet<GameObject> missing)
+    private Transform GetHighestCompleteLevel(Transform current, HashSet<GameObject> inSphere)
     {
-        Transform current = obj.transform;
-        
-        while (current != null)
+        if (current.parent == null) return current;
+        if (IsTransformComplete(current.parent, inSphere))
         {
-            // Stop processing if we hit a parent that is NOT our locked root
-            if (lockedRoot != null && !current.IsChildOf(lockedRoot)) break;
+            return GetHighestCompleteLevel(current.parent, inSphere);
+        }
+        return current;
+    }
 
-            bool allChildrenInSphere = true;
-            List<GameObject> currentMissing = new List<GameObject>();
-            
-            foreach (Transform child in current)
+    private bool IsTransformComplete(Transform target, HashSet<GameObject> inSphere)
+    {
+        Renderer[] childRenderers = target.GetComponentsInChildren<Renderer>();
+        if (childRenderers.Length == 0) return inSphere.Contains(target.gameObject);
+
+        int renderersFound = 0;
+        foreach (Renderer r in childRenderers)
+        {
+            if (!r.enabled || r is ParticleSystemRenderer) continue;
+            renderersFound++;
+            if (!inSphere.Contains(r.gameObject)) return false;
+        }
+        return renderersFound > 0;
+    }
+
+    private void HighlightDetectedSubObjects(Transform root, HashSet<GameObject> inSphere)
+    {
+        foreach (Renderer r in root.GetComponentsInChildren<Renderer>())
+        {
+            if (inSphere.Contains(r.gameObject))
             {
-                if (!inSphere.Contains(child.gameObject))
-                {
-                    allChildrenInSphere = false;
-                    currentMissing.Add(child.gameObject);
-                }
-            }
-
-            if (!inSphere.Contains(current.gameObject))
-            {
-                allChildrenInSphere = false;
-                currentMissing.Add(current.gameObject);
-            }
-
-            if (allChildrenInSphere)
-            {
-                Color targetColor = (current.parent == null || current == lockedRoot) ? Color.black : Color.green;
-                ApplyHighlight(current.gameObject, targetColor);
-                completed.Add(current.gameObject);
-
-                foreach (Transform child in current)
-                {
-                    ApplyHighlight(child.gameObject, targetColor);
-                    completed.Add(child.gameObject);
-                }
-                current = current.parent;
-            }
-            else
-            {
-                if (inSphere.Contains(current.gameObject))
-                {
-                    ApplyHighlight(current.gameObject, Color.green);
-                    completed.Add(current.gameObject);
-                }
-
-                foreach (GameObject m in currentMissing)
-                {
-                    ApplyHighlight(m, Color.red);
-                    missing.Add(m);
-                }
-                break;
+                ApplyHighlight(r.gameObject, Color.green);
             }
         }
     }
 
-    private List<GameObject> GetObjectsInSphere(bool ignoreLock)
+    private void ApplyHighlightToHierarchy(GameObject root, Color col)
+    {
+        Renderer r = root.GetComponent<Renderer>();
+        if (r != null) ApplyHighlight(root, col);
+        foreach (Renderer childRend in root.GetComponentsInChildren<Renderer>())
+        {
+            ApplyHighlight(childRend.gameObject, col);
+        }
+    }
+
+    private List<GameObject> GetObjectsInSphere()
     {
         List<GameObject> results = new List<GameObject>();
-        Collider[] hits = Physics.OverlapSphere(transform.position, selectionRadius);
+        Collider[] hits = Physics.OverlapSphere(transform.position, selectionRadius + 0.05f);
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
-
-            if (!ignoreLock && lockedRoot != null)
-            {
-                if (!hit.transform.IsChildOf(lockedRoot)) continue;
-            }
-
             if (IsMeshCompletelyContained(hit.gameObject, transform.position, selectionRadius))
                 results.Add(hit.gameObject);
         }
         return results;
-    }
-
-    // Helper to find the top-level parent of a group
-    private Transform FindHighestParent(Transform child)
-    {
-        Transform current = child;
-        while (current.parent != null)
-        {
-            current = current.parent;
-        }
-        return current;
-    }
-
-    private Transform FindGroupRoot(Transform child)
-    {
-        Transform current = child;
-    
-        // We climb up the ladder as long as there is a "Grandparent".
-        // This ensures we stop at the child of the absolute root.
-        while (current.parent != null && current.parent.parent != null)
-        {
-            current = current.parent;
-        }
-    
-        return current;
     }
 
     private void ApplyHighlight(GameObject obj, Color color)
@@ -212,11 +204,10 @@ public class SphereGroupsSelector : MonoBehaviour
         Renderer r = obj.GetComponent<Renderer>();
         if (r == null) return;
         if (!originalColors.ContainsKey(obj)) originalColors[obj] = r.material.color;
-
-        if (r.material.color == Color.black) return; 
-        if (r.material.color == Color.green && color == Color.red) return;
-
-        r.material.color = color;
+        
+        if (color == Color.black) { r.material.color = Color.black; }
+        else if (color == Color.green) { if (r.material.color != Color.black) r.material.color = Color.green; }
+        else if (color == Color.red) { if (r.material.color != Color.black && r.material.color != Color.green) r.material.color = Color.red; }
     }
 
     public void ResetHighlighting()
@@ -236,7 +227,7 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         MeshFilter mf = obj.GetComponent<MeshFilter>();
         if (mf == null || mf.sharedMesh == null) return false;
-        float rSq = radius * radius;
+        float rSq = (radius * 1.01f) * (radius * 1.01f);
         foreach (Vector3 v in mf.sharedMesh.vertices)
         {
             if ((obj.transform.TransformPoint(v) - center).sqrMagnitude > rSq) return false;
