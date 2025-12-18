@@ -52,10 +52,19 @@ public class SelectionManager : MonoBehaviour
             return;
         }
 
-        SelectablePart sp =
-            hit.collider.GetComponentInParent<SelectablePart>();
+        OutlineSelectable outline =
+            hit.collider.GetComponent<OutlineSelectable>();
 
-        if (sp != hoveredPart && sp.transform.parent == viewedPart.transform)
+        if (outline == null)
+        {
+            ClearHover();
+            return;
+        }
+
+        SelectablePart sp = outline.owner;
+
+        if (sp != hoveredPart &&
+            sp.transform.parent == viewedPart.transform)
         {
             ClearHover();
             hoveredPart = sp;
@@ -67,6 +76,7 @@ public class SelectionManager : MonoBehaviour
     {
         if (hoveredPart != null)
             hoveredPart.SetOutlined(false);
+
         hoveredPart = null;
     }
 
