@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 3239548}
   - component: {fileID: 3239547}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch3-1
+  m_Name: Switch6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 40941464}
   - component: {fileID: 40941465}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge2
+  m_Name: Guage2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -383,7 +383,7 @@ GameObject:
   - component: {fileID: 86764328}
   - component: {fileID: 86764327}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-3
+  m_Name: Button3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -492,7 +492,7 @@ GameObject:
   - component: {fileID: 97231696}
   - component: {fileID: 97231695}
   m_Layer: 0
-  m_Name: CockpitEquipments_FootStand-1
+  m_Name: Foodstand1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -601,7 +601,7 @@ GameObject:
   - component: {fileID: 150125527}
   - component: {fileID: 150125526}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-11
+  m_Name: Button18
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -819,7 +819,7 @@ GameObject:
   - component: {fileID: 205255298}
   - component: {fileID: 205255297}
   m_Layer: 0
-  m_Name: Wing2_Mirrored
+  m_Name: Wing_right_top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -928,7 +928,7 @@ GameObject:
   - component: {fileID: 229227316}
   - component: {fileID: 229227315}
   m_Layer: 0
-  m_Name: Big_Launcher
+  m_Name: Big_Launcher_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1073,7 +1073,7 @@ GameObject:
   - component: {fileID: 326410984}
   - component: {fileID: 326410983}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch3-3
+  m_Name: Switch8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1182,7 +1182,7 @@ GameObject:
   - component: {fileID: 372486915}
   - component: {fileID: 372486914}
   m_Layer: 0
-  m_Name: CockpitEquipments_ScreenFrame-1
+  m_Name: Screenframe1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1291,7 +1291,7 @@ GameObject:
   - component: {fileID: 378845818}
   - component: {fileID: 378845817}
   m_Layer: 0
-  m_Name: CockpitEquipments_Handle-1
+  m_Name: Handle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1400,7 +1400,7 @@ GameObject:
   - component: {fileID: 400067285}
   - component: {fileID: 400067284}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-2
+  m_Name: Button9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1556,7 +1556,7 @@ GameObject:
   - component: {fileID: 500032026}
   - component: {fileID: 500032025}
   m_Layer: 0
-  m_Name: Cockpit3_Body
+  m_Name: Cockpit_Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1662,7 +1662,7 @@ GameObject:
   - component: {fileID: 541219006}
   - component: {fileID: 541219007}
   m_Layer: 0
-  m_Name: CockpitEquipments_Handles
+  m_Name: Handles
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1868,7 +1868,7 @@ GameObject:
   - component: {fileID: 580443019}
   - component: {fileID: 580443018}
   m_Layer: 0
-  m_Name: Cockpit3_Interior
+  m_Name: Cockpit_Interior
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1977,7 +1977,7 @@ GameObject:
   - component: {fileID: 621148469}
   - component: {fileID: 621148468}
   m_Layer: 0
-  m_Name: CockpitEquipments_Screen-1
+  m_Name: Screen1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2380,7 +2380,7 @@ GameObject:
   - component: {fileID: 772375561}
   - component: {fileID: 772375560}
   m_Layer: 0
-  m_Name: CockpitEquipments_FootStand-2
+  m_Name: Foodstand2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2579,7 +2579,7 @@ GameObject:
   - component: {fileID: 792481929}
   - component: {fileID: 792481928}
   m_Layer: 0
-  m_Name: Blaster
+  m_Name: Blaster_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2688,7 +2688,7 @@ GameObject:
   - component: {fileID: 808005236}
   - component: {fileID: 808005235}
   m_Layer: 0
-  m_Name: CockpitEquipments_Joystick2-Base
+  m_Name: Joystick_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2794,7 +2794,7 @@ GameObject:
   - component: {fileID: 813385111}
   - component: {fileID: 813385112}
   m_Layer: 0
-  m_Name: CockpitEquipments_Joystick
+  m_Name: Joystick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2842,7 +2842,7 @@ GameObject:
   - component: {fileID: 814631271}
   - component: {fileID: 814631270}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch1-2
+  m_Name: Switch2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2951,7 +2951,7 @@ GameObject:
   - component: {fileID: 913758512}
   - component: {fileID: 913758511}
   m_Layer: 0
-  m_Name: Blaster
+  m_Name: Blaster_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3186,7 +3186,7 @@ GameObject:
   - component: {fileID: 929289184}
   - component: {fileID: 929289183}
   m_Layer: 0
-  m_Name: Wing2_Mirrored
+  m_Name: Tailwing_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3292,7 +3292,7 @@ GameObject:
   - component: {fileID: 964837294}
   - component: {fileID: 964837295}
   m_Layer: 0
-  m_Name: CockpitEquipments_FootStand
+  m_Name: Footstand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3340,7 +3340,7 @@ GameObject:
   - component: {fileID: 1052379053}
   - component: {fileID: 1052379052}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-4
+  m_Name: Button4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3449,7 +3449,7 @@ GameObject:
   - component: {fileID: 1054871292}
   - component: {fileID: 1054871291}
   m_Layer: 0
-  m_Name: CockpitEquipments_ScreenFrame-2
+  m_Name: Screenframe2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3558,7 +3558,7 @@ GameObject:
   - component: {fileID: 1081119660}
   - component: {fileID: 1081119659}
   m_Layer: 0
-  m_Name: Wing2
+  m_Name: Tailwing_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3667,7 +3667,7 @@ GameObject:
   - component: {fileID: 1081700944}
   - component: {fileID: 1081700943}
   m_Layer: 0
-  m_Name: Wing6_Mirrored
+  m_Name: Wing_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3776,7 +3776,7 @@ GameObject:
   - component: {fileID: 1116486693}
   - component: {fileID: 1116486692}
   m_Layer: 0
-  m_Name: CockpitEquipments_Joystick2-Handle
+  m_Name: Joystick_handle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3960,7 +3960,7 @@ GameObject:
   - component: {fileID: 1203379479}
   - component: {fileID: 1203379478}
   m_Layer: 0
-  m_Name: CockpitEquipments_Screen-2
+  m_Name: Screen2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4069,7 +4069,7 @@ GameObject:
   - component: {fileID: 1219972451}
   - component: {fileID: 1219972450}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge2-Base
+  m_Name: Gauge2_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4178,7 +4178,7 @@ GameObject:
   - component: {fileID: 1227000984}
   - component: {fileID: 1227000983}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-4
+  m_Name: Button11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4287,7 +4287,7 @@ GameObject:
   - component: {fileID: 1290955464}
   - component: {fileID: 1290955463}
   m_Layer: 0
-  m_Name: CockpitEquipments_ThrottleContro1-Base
+  m_Name: Throttle1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4396,7 +4396,7 @@ GameObject:
   - component: {fileID: 1293930025}
   - component: {fileID: 1293930024}
   m_Layer: 0
-  m_Name: Cockpit3_Glass
+  m_Name: Cockpit_Glass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4505,7 +4505,7 @@ GameObject:
   - component: {fileID: 1306870326}
   - component: {fileID: 1306870325}
   m_Layer: 0
-  m_Name: Wing2_Mirrored
+  m_Name: Wing_right_bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4614,7 +4614,7 @@ GameObject:
   - component: {fileID: 1322539631}
   - component: {fileID: 1322539630}
   m_Layer: 0
-  m_Name: CockpitEquipments_Handle-2
+  m_Name: Handle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4720,7 +4720,7 @@ GameObject:
   - component: {fileID: 1324272788}
   - component: {fileID: 1324272789}
   m_Layer: 0
-  m_Name: Cockpit3_WithInterior
+  m_Name: Cockpit
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4770,7 +4770,7 @@ GameObject:
   - component: {fileID: 1337854712}
   - component: {fileID: 1337854711}
   m_Layer: 0
-  m_Name: Big_Launcher
+  m_Name: Big_Launcher_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4879,7 +4879,7 @@ GameObject:
   - component: {fileID: 1346474494}
   - component: {fileID: 1346474493}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-5
+  m_Name: Button12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5040,7 +5040,7 @@ GameObject:
   - component: {fileID: 1353626959}
   - component: {fileID: 1353626958}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-5
+  m_Name: Button5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5149,7 +5149,7 @@ GameObject:
   - component: {fileID: 1357070218}
   - component: {fileID: 1357070217}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-1
+  m_Name: Button1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5255,7 +5255,7 @@ GameObject:
   - component: {fileID: 1366940226}
   - component: {fileID: 1366940227}
   m_Layer: 0
-  m_Name: CockpitEquipments_Screens
+  m_Name: Screens
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5398,7 +5398,7 @@ GameObject:
   - component: {fileID: 1465477947}
   - component: {fileID: 1465477946}
   m_Layer: 0
-  m_Name: Engine1
+  m_Name: Engine_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5504,7 +5504,7 @@ GameObject:
   - component: {fileID: 1468732704}
   - component: {fileID: 1468732705}
   m_Layer: 0
-  m_Name: CockpitEquipments_ThrottleControl
+  m_Name: ThrottleControl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5553,7 +5553,7 @@ GameObject:
   - component: {fileID: 1476207911}
   - component: {fileID: 1476207910}
   m_Layer: 0
-  m_Name: MainBody13
+  m_Name: MainBody_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5662,7 +5662,7 @@ GameObject:
   - component: {fileID: 1482338431}
   - component: {fileID: 1482338430}
   m_Layer: 0
-  m_Name: CockpitEquipments_Stand
+  m_Name: Stand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5771,7 +5771,7 @@ GameObject:
   - component: {fileID: 1507786322}
   - component: {fileID: 1507786321}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button5
+  m_Name: Button7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5880,7 +5880,7 @@ GameObject:
   - component: {fileID: 1509358283}
   - component: {fileID: 1509358282}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button7
+  m_Name: Button19
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5989,7 +5989,7 @@ GameObject:
   - component: {fileID: 1560097031}
   - component: {fileID: 1560097030}
   m_Layer: 0
-  m_Name: MainBody2
+  m_Name: MainBody_middle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6098,7 +6098,7 @@ GameObject:
   - component: {fileID: 1567055988}
   - component: {fileID: 1567055987}
   m_Layer: 0
-  m_Name: CockpitEquipments_ThrottleControl1-Handle1
+  m_Name: Throttle2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6204,7 +6204,7 @@ GameObject:
   - component: {fileID: 1572294337}
   - component: {fileID: 1572294338}
   m_Layer: 0
-  m_Name: Cockpit3_InteriorDetails
+  m_Name: Cockpit_Knopjes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6259,7 +6259,7 @@ GameObject:
   - component: {fileID: 1573895834}
   - component: {fileID: 1573895835}
   m_Layer: 0
-  m_Name: CockpitEquipments_HUD
+  m_Name: HUD
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6307,7 +6307,7 @@ GameObject:
   - component: {fileID: 1584150167}
   - component: {fileID: 1584150166}
   m_Layer: 0
-  m_Name: Wing2
+  m_Name: Wing_left_top
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6416,7 +6416,7 @@ GameObject:
   - component: {fileID: 1595708345}
   - component: {fileID: 1595708344}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-1
+  m_Name: Button8
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6591,7 +6591,7 @@ GameObject:
   - component: {fileID: 1635162394}
   - component: {fileID: 1635162393}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge2-Screen
+  m_Name: Gauge2_screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6700,7 +6700,7 @@ GameObject:
   - component: {fileID: 1652509095}
   - component: {fileID: 1652509094}
   m_Layer: 0
-  m_Name: CockpitEquipments_HUD-1
+  m_Name: HUD1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6945,7 +6945,7 @@ GameObject:
   - component: {fileID: 1721336238}
   - component: {fileID: 1721336237}
   m_Layer: 0
-  m_Name: CockpitEquipments_SeatEjectorHandle
+  m_Name: SeatEjectorHandle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7051,7 +7051,7 @@ GameObject:
   - component: {fileID: 1729844491}
   - component: {fileID: 1729844492}
   m_Layer: 0
-  m_Name: CockpitEquipments_Seat
+  m_Name: Seat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7099,7 +7099,7 @@ GameObject:
   - component: {fileID: 1733486920}
   - component: {fileID: 1733486919}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-7
+  m_Name: Button14
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7208,7 +7208,7 @@ GameObject:
   - component: {fileID: 1755251178}
   - component: {fileID: 1755251177}
   m_Layer: 0
-  m_Name: CockpitEquipments_ThrottleControl1-Handle2
+  m_Name: Throttle3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7317,7 +7317,7 @@ GameObject:
   - component: {fileID: 1773858446}
   - component: {fileID: 1773858445}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-9
+  m_Name: Button16
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7426,7 +7426,7 @@ GameObject:
   - component: {fileID: 1774958482}
   - component: {fileID: 1774958481}
   m_Layer: 0
-  m_Name: CockpitEquipments_HUD-2
+  m_Name: HUD2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7613,7 +7613,7 @@ GameObject:
   - component: {fileID: 1790560901}
   - component: {fileID: 1790560900}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch3-4
+  m_Name: Switch9
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7722,7 +7722,7 @@ GameObject:
   - component: {fileID: 1836892126}
   - component: {fileID: 1836892125}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch2-3
+  m_Name: Switch5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7831,7 +7831,7 @@ GameObject:
   - component: {fileID: 1838467953}
   - component: {fileID: 1838467952}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-6
+  m_Name: Button13
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7940,7 +7940,7 @@ GameObject:
   - component: {fileID: 1861312275}
   - component: {fileID: 1861312274}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-10
+  m_Name: Button17
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8049,7 +8049,7 @@ GameObject:
   - component: {fileID: 1862948793}
   - component: {fileID: 1862948792}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch1-1
+  m_Name: Switch1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8158,7 +8158,7 @@ GameObject:
   - component: {fileID: 1862973241}
   - component: {fileID: 1862973240}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch3-5
+  m_Name: Switch10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8267,7 +8267,7 @@ GameObject:
   - component: {fileID: 1876988715}
   - component: {fileID: 1876988714}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-6
+  m_Name: Button6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8373,7 +8373,7 @@ GameObject:
   - component: {fileID: 1891129374}
   - component: {fileID: 1891129375}
   m_Layer: 0
-  m_Name: CockpitEquipments_Buttons
+  m_Name: Buttons
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8438,7 +8438,7 @@ GameObject:
   - component: {fileID: 1901744975}
   - component: {fileID: 1901744974}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge1-Base
+  m_Name: Gauge_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8592,7 +8592,7 @@ GameObject:
   - component: {fileID: 1933434388}
   - component: {fileID: 1933434387}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-8
+  m_Name: Button15
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8818,7 +8818,7 @@ GameObject:
   - component: {fileID: 1934957590}
   - component: {fileID: 1934957589}
   m_Layer: 0
-  m_Name: Wing6
+  m_Name: Wing_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8927,7 +8927,7 @@ GameObject:
   - component: {fileID: 1952072125}
   - component: {fileID: 1952072124}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch2-1
+  m_Name: Switch3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9036,7 +9036,7 @@ GameObject:
   - component: {fileID: 1959617091}
   - component: {fileID: 1959617090}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch2-2
+  m_Name: Switch4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9142,7 +9142,7 @@ GameObject:
   - component: {fileID: 1972779551}
   - component: {fileID: 1972779552}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switchs
+  m_Name: Switches
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9198,7 +9198,7 @@ GameObject:
   - component: {fileID: 1985262977}
   - component: {fileID: 1985262976}
   m_Layer: 0
-  m_Name: CockpitEquipments_Seat
+  m_Name: Seat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9307,7 +9307,7 @@ GameObject:
   - component: {fileID: 2005279513}
   - component: {fileID: 2005279512}
   m_Layer: 0
-  m_Name: MainBody13_Mirrored
+  m_Name: MainBody_right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9416,7 +9416,7 @@ GameObject:
   - component: {fileID: 2009544213}
   - component: {fileID: 2009544212}
   m_Layer: 0
-  m_Name: CockpitEquipments_Switch3-2
+  m_Name: Switch7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9522,7 +9522,7 @@ GameObject:
   - component: {fileID: 2012325635}
   - component: {fileID: 2012325636}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge1
+  m_Name: Guage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9570,7 +9570,7 @@ GameObject:
   - component: {fileID: 2014755575}
   - component: {fileID: 2014755574}
   m_Layer: 0
-  m_Name: CockpitEquipments_Gauge1-Screen
+  m_Name: Gauge2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9679,7 +9679,7 @@ GameObject:
   - component: {fileID: 2076518830}
   - component: {fileID: 2076518829}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button4-2
+  m_Name: Button2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9788,7 +9788,7 @@ GameObject:
   - component: {fileID: 2104353471}
   - component: {fileID: 2104353470}
   m_Layer: 0
-  m_Name: Wing2
+  m_Name: Wing_left_bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9897,7 +9897,7 @@ GameObject:
   - component: {fileID: 2140196872}
   - component: {fileID: 2140196871}
   m_Layer: 0
-  m_Name: CockpitEquipments_Button6-3
+  m_Name: Button10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10006,7 +10006,7 @@ GameObject:
   - component: {fileID: 2140633533}
   - component: {fileID: 2140633532}
   m_Layer: 0
-  m_Name: Engine1
+  m_Name: Engine_left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
