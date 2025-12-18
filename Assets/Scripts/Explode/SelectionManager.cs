@@ -37,15 +37,36 @@ public class SelectionManager : MonoBehaviour
 
     void HandleSelection()
     {
-        if (selectedPart != null) 
-            selectedPart.isSelected = false;
-
-        selectedPart = hoveredPart;
-        
-        if (selectedPart != null)
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, outlineLayer))
         {
-            selectedPart.isSelected = true;
-            selectedPart.GetComponent<PartOutlineHandler>().UpdateVisuals(true);
+            var core = hit.collider.GetComponent<ExplosionCore>();
+            if (core != null)
+            {
+                hoveredPart = null;
+                core.RequestCollapse();
+                return; 
+            }
+
+            var part = hit.collider.GetComponent<OutlineSelectable>()?.owner;
+            
+            // Only update if selection actually changed
+            if (part != selectedPart)
+            {
+                if (selectedPart != null)
+                {
+                    selectedPart.isSelected = false;
+                    selectedPart.GetComponent<PartOutlineHandler>().UpdateVisuals(false);
+                }
+
+                selectedPart = part;
+
+                if (selectedPart != null)
+                {
+                    selectedPart.isSelected = true;
+                    selectedPart.GetComponent<PartOutlineHandler>().UpdateVisuals(true);
+                }
+            }
         }
     }
 
@@ -55,8 +76,16 @@ public class SelectionManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
         {
+            // Before exploding, clear selection visuals so the parent outline vanishes
+            var handler = selectedPart.GetComponent<PartOutlineHandler>();
+            selectedPart.isSelected = false;
+            handler.UpdateVisuals(false); 
+            handler.SetColliderActive(false);
+
             selectedPart.GetComponent<PartExplosionHandler>()?.ToggleExplosion(true);
-            selectedPart.GetComponent<PartOutlineHandler>()?.SetColliderActive(false);
+            
+            // Null out selection because the parent is now "intangible"
+            selectedPart = null;
         }
 
         if (Input.GetKeyDown(KeyCode.C))

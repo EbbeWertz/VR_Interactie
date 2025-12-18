@@ -22,13 +22,24 @@ public class PartOutlineHandler : MonoBehaviour
 
     public void UpdateVisuals(bool isHovering)
     {
+        // If the part is currently exploded, it should NEVER show an outline
+        if (part.isExploded)
+        {
+            SetOutline(null, false);
+            return;
+        }
+
         if (part.isSelected)
         {
             SetOutline(selectMaterial, true);
         }
+        else if (isHovering)
+        {
+            SetOutline(hoverMaterial, true);
+        }
         else
         {
-            SetOutline(hoverMaterial, isHovering);
+            SetOutline(null, false);
         }
     }
 
