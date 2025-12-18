@@ -51,24 +51,26 @@ public class OVRSphereSelector : MonoBehaviour
 
     private void HandleInput()
     {
-        // 1. HORIZONTAL MOVEMENT (Right Thumbstick)
         Vector2 stickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, sphereController);
-        Vector3 moveDir = (transform.forward * stickInput.y) + (transform.right * stickInput.x);
-
-        // 2. VERTICAL MOVEMENT (Triggers)
-        // Right Trigger moves sphere UP, Left Trigger moves sphere DOWN
-        float up = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
-        float down = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch);
-        moveDir.y = up - down;
-
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
-
         // 3. SCALING (Right Hand Grip Button)
         // Hold Grip and move stick left/right to scale
         if (OVRInput.Get(OVRInput.Button.PrimaryHandTrigger, sphereController))
         {
             float scaleInput = stickInput.x; 
             selectionRadius += scaleInput * scaleSpeed * Time.deltaTime;
+        }
+        else
+        {
+            // 1. HORIZONTAL MOVEMENT (Right Thumbstick)
+            Vector3 moveDir = (transform.forward * stickInput.y) + (transform.right * stickInput.x);
+
+            // 2. VERTICAL MOVEMENT (Triggers)
+            // Right Trigger moves sphere UP, Left Trigger moves sphere DOWN
+            float up = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.RTouch);
+            float down = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, OVRInput.Controller.LTouch);
+            moveDir.y = up - down;
+
+            transform.position += moveDir * moveSpeed * Time.deltaTime;
         }
         selectionRadius = Mathf.Max(minRadius, selectionRadius);
 
