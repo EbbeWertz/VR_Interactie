@@ -34,13 +34,9 @@ public class SelectionManager : MonoBehaviour
             viewedPart.Explode();
             exploded = true;
 
-            // Disable parent collider
             viewedPart.SetOutlineColliderEnabled(false);
-
-            // Enable direct children colliders (they are scattered)
             viewedPart.EnableDirectChildColliders();
 
-            // Ensure deeper descendants are disabled
             foreach (Transform child in viewedPart.transform)
             {
                 var sp = child.GetComponent<SelectablePart>();
@@ -53,12 +49,10 @@ public class SelectionManager : MonoBehaviour
             viewedPart.Collapse();
             exploded = false;
 
-            // Restore colliders after collapse
             viewedPart.SetOutlineColliderEnabled(true);
             viewedPart.DisableAllDescendantColliders();
         }
     }
-
 
     void HandleHover()
     {
@@ -96,17 +90,49 @@ public class SelectionManager : MonoBehaviour
 
     void PromoteHovered()
     {
-        // Collapse current part
-        viewedPart.Collapse();
-        exploded = false;
+        if (hoveredPart == null)
+            return;
 
+        // Disable outline and collider for the selected part
+        hoveredPart.SetOutlined(false);
+        hoveredPart.SetOutlineColliderEnabled(false);
+
+        // Collapse all other children of the currently viewed part
+        foreach (Transform child in viewedPart.transform)
+        {
+            var sp = child.GetComponent<SelectablePart>();
+            if (sp != null && sp != hoveredPart)
+                sp.Collapse();
+        }
+
+        // The parent itself may collapse if it is not the hovered part
+        if (viewedPart != hoveredPart)
+            viewedPart.Collapse();
+
+        // Keep the hovered part exploded
+        hoveredPart.Explode();
+
+        // The hovered part becomes the new viewedPart
         viewedPart = hoveredPart;
         hoveredPart = null;
 
-        UpdateChildOutlines(viewedPart);
+        exploded = true; // promoted part stays exploded
+
+        // Update outlines for the direct children of the promoted part only
+        foreach (Transform child in viewedPart.transform)
+        {
+            var sp = child.GetComponent<SelectablePart>();
+            if (sp != null)
+            {
+                sp.CreateOutline();
+                sp.SetOutlineColliderEnabled(true);
+                sp.DisableAllDescendantColliders();
+            }
+        }
     }
 
-    // Enables outlines for direct children and disables colliders for deeper descendants
+
+
     void UpdateChildOutlines(SelectablePart parent)
     {
         foreach (Transform child in parent.transform)
@@ -115,9 +141,7 @@ public class SelectionManager : MonoBehaviour
             if (sp != null)
             {
                 sp.CreateOutline();
-                sp.SetOutlineColliderEnabled(true); // direct child collider enabled
-
-                // disable colliders for deeper descendants
+                sp.SetOutlineColliderEnabled(true);
                 DisableDescendantColliders(sp, true);
             }
         }
@@ -136,8 +160,6 @@ public class SelectionManager : MonoBehaviour
         }
 
         if (includeSelf)
-        {
             part.SetOutlineColliderEnabled(false);
-        }
     }
 }

@@ -9,6 +9,7 @@ public class SelectablePart : MonoBehaviour
 
     [HideInInspector] public GameObject outlineInstance;
 
+    public bool isPromoted { get; private set; } = false;
     private MeshRenderer outlineRenderer;
     private Dictionary<Transform, Vector3> originalLocalPositions = new Dictionary<Transform, Vector3>();
     private Coroutine explodeRoutine;
@@ -23,6 +24,13 @@ public class SelectablePart : MonoBehaviour
     {
         foreach (Transform child in transform)
             originalLocalPositions[child] = child.localPosition;
+    }
+
+    public void Promote()
+    {
+        isPromoted = true;
+        SetOutlined(false);
+        SetOutlineColliderEnabled(false);
     }
 
     // Always generate an outline
@@ -95,6 +103,9 @@ public class SelectablePart : MonoBehaviour
 
     public void Collapse()
     {
+        if (isPromoted)
+            return;
+
         StartExplosion(false);
     }
 
@@ -133,7 +144,7 @@ public class SelectablePart : MonoBehaviour
             }
             else
             {
-                target[i] = originalLocalPositions[child];
+                target[i] = GetOriginalLocalPosition(child);
             }
         }
 
@@ -189,6 +200,14 @@ public class SelectablePart : MonoBehaviour
         }
     }
 
+
+    Vector3 GetOriginalLocalPosition(Transform child)
+    {
+        if (!originalLocalPositions.ContainsKey(child))
+            originalLocalPositions[child] = child.localPosition;
+
+        return originalLocalPositions[child];
+    }
 
 
     Bounds GetBounds(Transform t)
