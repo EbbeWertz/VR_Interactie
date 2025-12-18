@@ -587,72 +587,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 97231693}
   m_Mesh: {fileID: 4300080, guid: 660686678d5f55947881d7fe1a8292c1, type: 3}
---- !u!1 &143972898
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 143972900}
-  - component: {fileID: 143972899}
-  - component: {fileID: 143972901}
-  m_Layer: 0
-  m_Name: uiManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &143972899
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 143972898}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef47ace8cb3fc4a48ac7145e44a6f1d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  contentParent: {fileID: 1780558858}
-  listItemPrefab: {fileID: 7979460588401122177, guid: b1e530fb88228214a8c0c4b4c1ee6693,
-    type: 3}
-  sphereSelector: {fileID: 0}
---- !u!4 &143972900
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 143972898}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.25698, y: 3.1357088, z: -5.750904}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &143972901
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 143972898}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 468a30fdfd1d0974ba3c6bd706740220, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  contentParent: {fileID: 1780558858}
-  listItemPrefab: {fileID: 7979460588401122177, guid: b1e530fb88228214a8c0c4b4c1ee6693,
-    type: 3}
-  completedColor: {r: 0, g: 1, b: 0, a: 1}
-  missingColor: {r: 1, g: 0, b: 0, a: 1}
-  sphereSelector: {fileID: 578156604}
 --- !u!1 &150125524
 GameObject:
   m_ObjectHideFlags: 0
@@ -800,7 +734,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 745.9, y: 148.8}
+  m_AnchoredPosition: {x: 745.9, y: 0}
   m_SizeDelta: {x: 400, y: 729.1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &162613431
@@ -1800,7 +1734,7 @@ MonoBehaviour:
   selectionMaterial: {fileID: 2100000, guid: 7e4763f5723568949b0fc3062f81b150, type: 2}
   movementThreshold: 0.1
   scaleThreshold: 0.1
-  uiManager: {fileID: 143972899}
+  uiManager: {fileID: 0}
 --- !u!114 &578156599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1917,6 +1851,7 @@ MonoBehaviour:
   minRadius: 0.5
   selectionRadius: 3
   movementThreshold: 0.1
+  lockKey: 32
   uiManager: {fileID: 1440790273}
 --- !u!1 &580443016
 GameObject:
@@ -5634,7 +5569,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1465477944
 GameObject:
