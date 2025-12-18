@@ -13,14 +13,16 @@ public class SphereGroupsSelector : MonoBehaviour
     public float movementThreshold = 0.1f;
     public KeyCode lockKey = KeyCode.Space;
 
+    [Header("Selected")]
+    public bool enableVibration = true;
+
     [Header("UI Integration")]
     public Uigroups uiManager; 
 
     private Dictionary<GameObject, Color> originalColors = new Dictionary<GameObject, Color>();
     private Vector3 lastPosition;
     private float lastRadius;
-
-    private Transform lockedRoot = null;
+    private List<GameObject> lastCompletedList = new List<GameObject>();
 
     private void Start()
     {
@@ -59,19 +61,28 @@ public class SphereGroupsSelector : MonoBehaviour
         if (Input.GetKey(KeyCode.P)) selectionRadius -= scaleSpeed * Time.deltaTime;
         selectionRadius = Mathf.Max(minRadius, selectionRadius);
 
+        // --- SELECTIE VIA SPATIEBALK ---
         if (Input.GetKeyDown(lockKey))
         {
-            if (lockedRoot != null) lockedRoot = null;
-            else
+            if (lastCompletedList.Count > 0)
             {
-                List<GameObject> currentInSphere = GetObjectsInSphere(true); 
-                if (currentInSphere.Count > 0)
-                {
-                    lockedRoot = FindGroupRoot(currentInSphere[0].transform);
-                }
+                TriggerSelection(lastCompletedList[0]);
             }
-            UpdateSelectionDisplay();
         }
+    }
+
+    private void TriggerSelection(GameObject target)
+    {
+        // Multimodale Feedback: Trilling
+        if (enableVibration)
+        {
+#if UNITY_ANDROID || UNITY_IOS
+            Handheld.Vibrate();
+#endif
+            // Voor PC/Editor met controllers zou je hier de InputSystem Haptics kunnen aanroepen
+        }
+
+        Debug.Log("<color=orange>Selectie bevestigd voor: " + target.name + "</color>");
     }
     
     private void UpdateSphereVisuals() => transform.localScale = Vector3.one * (selectionRadius * 2);
@@ -80,9 +91,10 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         ResetHighlighting();
         
-        List<GameObject> allDetected = GetObjectsInSphere(false);
+        List<GameObject> allDetected = GetObjectsInSphere();
         if (allDetected.Count == 0)
         {
+            lastCompletedList.Clear();
             if (uiManager != null) uiManager.UpdateExplorerList(new List<GameObject>(), new List<GameObject>());
             return;
         }
@@ -91,14 +103,9 @@ public class SphereGroupsSelector : MonoBehaviour
         List<GameObject> completedForUI = new List<GameObject>();
         List<GameObject> missingForUI = new List<GameObject>();
 
-        // 1. Pak het eerste object als referentiepunt voor de huidige actieve groep
+        // Focus bepalen op basis van de hiërarchie
         Transform firstObj = allDetected[0].transform;
-        
-        // 2. Vind het hoogste niveau dat VOLLEDIG compleet is
         Transform activeLevel = GetHighestCompleteLevel(firstObj, objectsInSphere);
-
-        // 3. Als dit niveau compleet is, maar de parent erboven NIET, 
-        //    dan tonen we de siblings van dit niveau.
         Transform parentOfLevel = activeLevel.parent;
 
         if (parentOfLevel != null)
@@ -108,25 +115,24 @@ public class SphereGroupsSelector : MonoBehaviour
                 if (IsTransformComplete(child, objectsInSphere))
                 {
                     completedForUI.Add(child.gameObject);
-                    ApplyHighlightToHierarchy(child.gameObject, Color.green);
+                    ApplyHighlightToHierarchy(child.gameObject, Color.black);
                 }
                 else
                 {
                     missingForUI.Add(child.gameObject);
                     ApplyHighlightToHierarchy(child.gameObject, Color.red);
-                    
-                    // Specifiek voor de objecten die WEL in de sphere zitten maar wiens groep incompleet is:
-                    // Die kleuren we groen bovenop het rood van de groep.
                     HighlightDetectedSubObjects(child, objectsInSphere);
                 }
             }
         }
         else
         {
-            // We zitten op de absolute root
             completedForUI.Add(activeLevel.gameObject);
             ApplyHighlightToHierarchy(activeLevel.gameObject, Color.black);
         }
+
+        // Update de interne lijst voor de spatiebalk-actie
+        lastCompletedList = new List<GameObject>(completedForUI);
 
         if (uiManager != null)
         {
@@ -134,19 +140,13 @@ public class SphereGroupsSelector : MonoBehaviour
         }
     }
 
-    // Klimt omhoog zolang de VOLLEDIGE parent-groep compleet is
     private Transform GetHighestCompleteLevel(Transform current, HashSet<GameObject> inSphere)
     {
         if (current.parent == null) return current;
-        if (lockedRoot != null && current == lockedRoot) return current;
-
-        // Check of ALLE kinderen van de parent in de sphere zitten
         if (IsTransformComplete(current.parent, inSphere))
         {
             return GetHighestCompleteLevel(current.parent, inSphere);
         }
-        
-        // Als de parent niet compleet is, is dit huidige object (of zijn groep) het actieve niveau
         return current;
     }
 
@@ -155,11 +155,14 @@ public class SphereGroupsSelector : MonoBehaviour
         Renderer[] childRenderers = target.GetComponentsInChildren<Renderer>();
         if (childRenderers.Length == 0) return inSphere.Contains(target.gameObject);
 
+        int renderersFound = 0;
         foreach (Renderer r in childRenderers)
         {
+            if (!r.enabled || r is ParticleSystemRenderer) continue;
+            renderersFound++;
             if (!inSphere.Contains(r.gameObject)) return false;
         }
-        return true;
+        return renderersFound > 0;
     }
 
     private void HighlightDetectedSubObjects(Transform root, HashSet<GameObject> inSphere)
@@ -177,34 +180,23 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         Renderer r = root.GetComponent<Renderer>();
         if (r != null) ApplyHighlight(root, col);
-
         foreach (Renderer childRend in root.GetComponentsInChildren<Renderer>())
         {
             ApplyHighlight(childRend.gameObject, col);
         }
     }
 
-    private List<GameObject> GetObjectsInSphere(bool ignoreLock)
+    private List<GameObject> GetObjectsInSphere()
     {
         List<GameObject> results = new List<GameObject>();
-        Collider[] hits = Physics.OverlapSphere(transform.position, selectionRadius);
+        Collider[] hits = Physics.OverlapSphere(transform.position, selectionRadius + 0.05f);
         foreach (var hit in hits)
         {
             if (hit.gameObject == gameObject) continue;
-            if (!ignoreLock && lockedRoot != null && !hit.transform.IsChildOf(lockedRoot)) continue;
-
             if (IsMeshCompletelyContained(hit.gameObject, transform.position, selectionRadius))
                 results.Add(hit.gameObject);
         }
         return results;
-    }
-
-    private Transform FindGroupRoot(Transform child)
-    {
-        Transform current = child;
-        while (current.parent != null && current.parent.parent != null)
-            current = current.parent;
-        return current;
     }
 
     private void ApplyHighlight(GameObject obj, Color color)
@@ -213,10 +205,9 @@ public class SphereGroupsSelector : MonoBehaviour
         if (r == null) return;
         if (!originalColors.ContainsKey(obj)) originalColors[obj] = r.material.color;
         
-        // Prioriteit: Zwart > Groen > Rood
-        if (color == Color.black) { r.material.color = color; return; }
-        if (color == Color.green && r.material.color != Color.black) { r.material.color = color; return; }
-        if (color == Color.red && r.material.color != Color.black && r.material.color != Color.green) { r.material.color = color; }
+        if (color == Color.black) { r.material.color = Color.black; }
+        else if (color == Color.green) { if (r.material.color != Color.black) r.material.color = Color.green; }
+        else if (color == Color.red) { if (r.material.color != Color.black && r.material.color != Color.green) r.material.color = Color.red; }
     }
 
     public void ResetHighlighting()
@@ -236,7 +227,7 @@ public class SphereGroupsSelector : MonoBehaviour
     {
         MeshFilter mf = obj.GetComponent<MeshFilter>();
         if (mf == null || mf.sharedMesh == null) return false;
-        float rSq = radius * radius;
+        float rSq = (radius * 1.01f) * (radius * 1.01f);
         foreach (Vector3 v in mf.sharedMesh.vertices)
         {
             if ((obj.transform.TransformPoint(v) - center).sqrMagnitude > rSq) return false;
