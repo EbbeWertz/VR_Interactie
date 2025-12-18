@@ -2,57 +2,80 @@ using UnityEngine;
 
 public class SelectionManager : MonoBehaviour
 {
-    public Transform rootObject; 
     public Camera cam;
+    public SelectablePart rootPart;
 
-    private SelectablePart selectedPart;
+    private SelectablePart viewedPart;
+    private SelectablePart hoveredPart;
+
+    private bool exploded;
+
+    void Start()
+    {
+        viewedPart = rootPart;
+    }
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        HandleHover();
+
+        if (Input.GetKeyDown(KeyCode.Space))
+            ToggleExplode();
+
+        if (Input.GetMouseButtonDown(0) && exploded && hoveredPart != null)
+            PromoteHovered();
+    }
+
+    void ToggleExplode()
+    {
+        if (!exploded)
         {
-            TrySelect();
+            viewedPart.ExplodeSphere();
+            exploded = true;
+        }
+        else
+        {
+            viewedPart.Collapse();
+            exploded = false;
         }
     }
 
-    void TrySelect()
+    void HandleHover()
     {
+        if (!exploded)
+            return;
+
         Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        if (!Physics.Raycast(ray, out RaycastHit hit))
         {
-            Transform hitTransform = hit.collider.transform;
+            ClearHover();
+            return;
+        }
 
-            // Find nearest selectable parent (including self)
-            SelectablePart selectable = hitTransform.GetComponentInParent<SelectablePart>();
+        SelectablePart sp =
+            hit.collider.GetComponentInParent<SelectablePart>();
 
-            if (selectable != null)
-            {
-                SelectPart(selectable);
-            }
+        if (sp != hoveredPart && sp.transform.parent == viewedPart.transform)
+        {
+            ClearHover();
+            hoveredPart = sp;
+            hoveredPart.SetOutlined(true);
         }
     }
 
-    void SelectPart(SelectablePart part)
+    void ClearHover()
     {
-        // Clear previous selection
-        if (selectedPart != null)
-            selectedPart.SetSelected(false);
-
-        selectedPart = part;
-
-        if (selectedPart != null)
-            selectedPart.SetSelected(true);
-
-        UpdateTransparency();
+        if (hoveredPart != null)
+            hoveredPart.SetOutlined(false);
+        hoveredPart = null;
     }
 
-    void UpdateTransparency()
+    void PromoteHovered()
     {
-        // Make all selectable parts transparent except the selected hierarchy
-        foreach (SelectablePart sp in rootObject.GetComponentsInChildren<SelectablePart>())
-        {
-            bool isSelectedOrChild = selectedPart != null && sp.transform.IsChildOf(selectedPart.transform);
-            sp.SetTransparent(!isSelectedOrChild);
-        }
+        viewedPart.Collapse();
+        exploded = false;
+
+        viewedPart = hoveredPart;
+        ClearHover();
     }
 }
