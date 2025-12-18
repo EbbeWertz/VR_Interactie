@@ -8,6 +8,7 @@ public class SelectablePart : MonoBehaviour
     public float explodeDuration = 1f;
 
     private GameObject outlineInstance;
+    private MeshRenderer outlineRenderer;
 
     private Dictionary<Transform, Vector3> originalLocalPositions =
         new Dictionary<Transform, Vector3>();
@@ -28,9 +29,7 @@ public class SelectablePart : MonoBehaviour
 
     void CreateOutline()
     {
-        MeshFilter[] childMeshFilters =
-            GetComponentsInChildren<MeshFilter>();
-
+        MeshFilter[] childMeshFilters = GetComponentsInChildren<MeshFilter>();
         if (childMeshFilters.Length == 0 || outlineMaterial == null)
             return;
 
@@ -41,10 +40,10 @@ public class SelectablePart : MonoBehaviour
         outlineInstance.transform.localScale = Vector3.one * 1.05f;
 
         Mesh combinedMesh = new Mesh();
+        combinedMesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
         CombineInstance[] combines = new CombineInstance[childMeshFilters.Length];
 
         int combineIndex = 0;
-
         foreach (var mf in childMeshFilters)
         {
             if (mf.sharedMesh == null)
@@ -59,20 +58,25 @@ public class SelectablePart : MonoBehaviour
 
         combinedMesh.CombineMeshes(combines, true, true);
 
-        var outlineMF = outlineInstance.AddComponent<MeshFilter>();
-        outlineMF.sharedMesh = combinedMesh;
+        var mfOutline = outlineInstance.AddComponent<MeshFilter>();
+        mfOutline.sharedMesh = combinedMesh;
 
-        var outlineMR = outlineInstance.AddComponent<MeshRenderer>();
-        outlineMR.material = outlineMaterial;
+        outlineRenderer = outlineInstance.AddComponent<MeshRenderer>();
+        outlineRenderer.material = outlineMaterial;
+        outlineRenderer.enabled = false;
 
-        outlineInstance.SetActive(false);
+        var meshCollider = outlineInstance.AddComponent<MeshCollider>();
+        meshCollider.sharedMesh = combinedMesh;
+        meshCollider.convex = false;
+
+        var selectable = outlineInstance.AddComponent<OutlineSelectable>();
+        selectable.owner = this;
     }
-
 
     public void SetOutlined(bool value)
     {
-        if (outlineInstance != null)
-            outlineInstance.SetActive(value);
+        if (outlineRenderer != null)
+            outlineRenderer.enabled = value;
     }
 
     // ---------------- Animated Explosion ----------------
@@ -145,11 +149,8 @@ public class SelectablePart : MonoBehaviour
             yield return null;
         }
 
-        // Snap to final positions
         for (int i = 0; i < count; i++)
-        {
             transform.GetChild(i).localPosition = targetPositions[i];
-        }
 
         explodeRoutine = null;
     }
