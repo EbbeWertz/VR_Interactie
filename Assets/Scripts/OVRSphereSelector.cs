@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class SphereGroupsSelector : MonoBehaviour
+public class OVRSphereSelector : MonoBehaviour
 {
     [Header("Movement & Scaling")]
     public float moveSpeed = 10f;
