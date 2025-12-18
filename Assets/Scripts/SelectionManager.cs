@@ -4,15 +4,16 @@ public class SelectionManager : MonoBehaviour
 {
     public Camera cam;
     public SelectablePart rootPart;
+    public LayerMask outlineLayer;
 
     private SelectablePart viewedPart;
     private SelectablePart hoveredPart;
-
     private bool exploded;
 
     void Start()
     {
         viewedPart = rootPart;
+        UpdateChildOutlines(viewedPart);
     }
 
     void Update()
@@ -30,44 +31,57 @@ public class SelectionManager : MonoBehaviour
     {
         if (!exploded)
         {
-            viewedPart.ExplodeSphere();
+            viewedPart.Explode();
             exploded = true;
+
+            // Disable parent collider
+            viewedPart.SetOutlineColliderEnabled(false);
+
+            // Enable direct children colliders (they are scattered)
+            viewedPart.EnableDirectChildColliders();
+
+            // Ensure deeper descendants are disabled
+            foreach (Transform child in viewedPart.transform)
+            {
+                var sp = child.GetComponent<SelectablePart>();
+                if (sp != null)
+                    sp.DisableAllDescendantColliders();
+            }
         }
         else
         {
             viewedPart.Collapse();
             exploded = false;
+
+            // Restore colliders after collapse
+            viewedPart.SetOutlineColliderEnabled(true);
+            viewedPart.DisableAllDescendantColliders();
         }
     }
+
 
     void HandleHover()
     {
         if (!exploded)
             return;
 
-        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out RaycastHit hit))
+        if (!Physics.Raycast(cam.ScreenPointToRay(Input.mousePosition), out RaycastHit hit, 1000f, outlineLayer))
         {
             ClearHover();
             return;
         }
 
-        OutlineSelectable outline =
-            hit.collider.GetComponent<OutlineSelectable>();
-
+        var outline = hit.collider.GetComponent<OutlineSelectable>();
         if (outline == null)
         {
             ClearHover();
             return;
         }
 
-        SelectablePart sp = outline.owner;
-
-        if (sp != hoveredPart &&
-            sp.transform.parent == viewedPart.transform)
+        if (outline.owner != hoveredPart)
         {
             ClearHover();
-            hoveredPart = sp;
+            hoveredPart = outline.owner;
             hoveredPart.SetOutlined(true);
         }
     }
@@ -82,10 +96,48 @@ public class SelectionManager : MonoBehaviour
 
     void PromoteHovered()
     {
+        // Collapse current part
         viewedPart.Collapse();
         exploded = false;
 
         viewedPart = hoveredPart;
-        ClearHover();
+        hoveredPart = null;
+
+        UpdateChildOutlines(viewedPart);
+    }
+
+    // Enables outlines for direct children and disables colliders for deeper descendants
+    void UpdateChildOutlines(SelectablePart parent)
+    {
+        foreach (Transform child in parent.transform)
+        {
+            var sp = child.GetComponent<SelectablePart>();
+            if (sp != null)
+            {
+                sp.CreateOutline();
+                sp.SetOutlineColliderEnabled(true); // direct child collider enabled
+
+                // disable colliders for deeper descendants
+                DisableDescendantColliders(sp, true);
+            }
+        }
+    }
+
+    void DisableDescendantColliders(SelectablePart part, bool includeSelf)
+    {
+        foreach (Transform child in part.transform)
+        {
+            var sp = child.GetComponent<SelectablePart>();
+            if (sp != null)
+            {
+                sp.SetOutlineColliderEnabled(false);
+                DisableDescendantColliders(sp, false);
+            }
+        }
+
+        if (includeSelf)
+        {
+            part.SetOutlineColliderEnabled(false);
+        }
     }
 }
