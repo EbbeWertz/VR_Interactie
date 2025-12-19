@@ -8,18 +8,28 @@ public class PartExplosionHandler : MonoBehaviour
     public float duration = 0.5f;
     public float explosionStrength = 0.5f;
     public Material lineMaterial;
-
     public float lineWidth = 0.01f;
 
     private SelectablePart part;
     private Coroutine activeRoutine;
-    private GameObject coreInstance;
-    private List<LineRenderer> activeLines = new List<LineRenderer>();
+    public GameObject coreInstance;
+
+    private Dictionary<Transform, LineRenderer> childLineMap = new Dictionary<Transform, LineRenderer>();
+    private LineRenderer parentTether;
 
     void Awake() => part = GetComponent<SelectablePart>();
 
     public void ToggleExplosion(bool explode)
     {
+        // Strict check: verify real selectable children exist
+        bool hasSelectableChildren = false;
+        foreach (Transform child in transform)
+        {
+            if (child.GetComponent<SelectablePart>() != null) { hasSelectableChildren = true; break; }
+        }
+
+        if (explode && !hasSelectableChildren) return;
+
         if (activeRoutine != null) StopCoroutine(activeRoutine);
 
         if (explode) CreateCoreAndLines();
@@ -28,13 +38,8 @@ public class PartExplosionHandler : MonoBehaviour
         activeRoutine = StartCoroutine(Animate(explode));
         part.isExploded = explode;
 
-        // FIX: When collapsing (explode == false), we MUST re-enable this part's collider 
-        // so it can be hovered/selected again.
         var outlineHandler = GetComponent<PartOutlineHandler>();
-        if (!explode)
-        {
-            outlineHandler.SetColliderActive(true);
-        }
+        if (!explode) outlineHandler.SetColliderActive(true);
 
         outlineHandler.UpdateVisuals(false);
         UpdateChildrenState(explode);
@@ -56,50 +61,78 @@ public class PartExplosionHandler : MonoBehaviour
         var coreLogic = coreInstance.AddComponent<ExplosionCore>();
         coreLogic.owner = part;
 
-        // Create a LineRenderer for every child part
+        // Tether current ball to parent ball
+        Transform parentTransform = transform.parent;
+        if (parentTransform != null)
+        {
+            var parentHandler = parentTransform.GetComponent<PartExplosionHandler>();
+            if (parentHandler != null && parentHandler.coreInstance != null)
+            {
+                parentTether = CreateLine("Tether_To_Parent");
+            }
+        }
+
+        // Lines to children
+        childLineMap.Clear();
         foreach (Transform child in transform)
         {
             if (child == coreInstance.transform || !part.originalLocalPositions.ContainsKey(child)) continue;
-
-            GameObject lineObj = new GameObject("Line_" + child.name);
-            lineObj.transform.SetParent(coreInstance.transform); // Clean up automatically with core
-
-            LineRenderer lr = lineObj.AddComponent<LineRenderer>();
-            lr.material = lineMaterial != null ? lineMaterial : new Material(Shader.Find("Sprites/Default"));
-            lr.startWidth = lineWidth;
-            lr.endWidth = lineWidth;
-            lr.positionCount = 2;
-            lr.useWorldSpace = true;
-
-            activeLines.Add(lr);
+            childLineMap[child] = CreateLine("Line_" + child.name);
         }
+    }
+
+    private LineRenderer CreateLine(string lineName)
+    {
+        GameObject lineObj = new GameObject(lineName);
+        lineObj.transform.SetParent(coreInstance.transform);
+        LineRenderer lr = lineObj.AddComponent<LineRenderer>();
+        lr.material = lineMaterial != null ? lineMaterial : new Material(Shader.Find("Sprites/Default"));
+        lr.startWidth = lr.endWidth = lineWidth;
+        lr.positionCount = 2;
+        lr.useWorldSpace = true;
+        return lr;
     }
 
     private void DestroyCoreAndLines()
     {
         if (coreInstance != null)
         {
-            // Stop the lines from updating immediately
-            activeLines.Clear();
+            childLineMap.Clear();
+            parentTether = null;
             Destroy(coreInstance);
             coreInstance = null;
         }
     }
 
-    private void LateUpdate() // Use LateUpdate to ensure lines follow animated children
+    private void LateUpdate()
     {
-        if (part.isExploded && coreInstance != null && activeLines.Count > 0)
-        {
-            int lineIdx = 0;
-            foreach (Transform child in transform)
-            {
-                // Skip the core and any non-part children
-                if (child == coreInstance.transform || !part.originalLocalPositions.ContainsKey(child)) continue;
-                if (lineIdx >= activeLines.Count) break;
+        if (!part.isExploded || coreInstance == null) return;
 
-                activeLines[lineIdx].SetPosition(0, coreInstance.transform.position);
-                activeLines[lineIdx].SetPosition(1, child.position);
-                lineIdx++;
+        if (parentTether != null)
+        {
+            var parentHandler = transform.parent.GetComponent<PartExplosionHandler>();
+            if (parentHandler != null && parentHandler.coreInstance != null)
+            {
+                parentTether.SetPosition(0, coreInstance.transform.position);
+                parentTether.SetPosition(1, parentHandler.coreInstance.transform.position);
+            }
+        }
+
+        foreach (var kvp in childLineMap)
+        {
+            Transform child = kvp.Key;
+            LineRenderer lr = kvp.Value;
+            if (child == null || lr == null) continue;
+
+            var childHandler = child.GetComponent<PartExplosionHandler>();
+            bool childIsExploded = childHandler != null && childHandler.coreInstance != null;
+
+            if (childIsExploded) lr.enabled = false; // Hide tether to mesh, ball-to-ball tether takes over
+            else
+            {
+                lr.enabled = true;
+                lr.SetPosition(0, coreInstance.transform.position);
+                lr.SetPosition(1, CalculateBounds(child).center); // Center of mesh bounds
             }
         }
     }
@@ -110,8 +143,6 @@ public class PartExplosionHandler : MonoBehaviour
         Vector3 centerWorld = b.center;
         float t = 0;
 
-        // 1. Pre-calculate the target positions for all children 
-        // to avoid the "moving target" bug and improve performance.
         Dictionary<Transform, Vector3> targetLocalPositions = new Dictionary<Transform, Vector3>();
         Dictionary<Transform, Vector3> startLocalPositions = new Dictionary<Transform, Vector3>();
 
@@ -124,42 +155,26 @@ public class PartExplosionHandler : MonoBehaviour
 
             if (explode)
             {
-                // Calculate direction from the group center to the child's center
                 Vector3 childWorldCenter = CalculateBounds(child).center;
                 Vector3 dir = (childWorldCenter - centerWorld).normalized;
-
-                // Use explosionStrength to control the distance
-                // We calculate the target based on the ORIGINAL position, not current
                 Vector3 startWorldPos = transform.TransformPoint(originalLocalPos);
                 Vector3 targetWorld = startWorldPos + (dir * b.extents.magnitude * explosionStrength);
                 targetLocalPositions[child] = transform.InverseTransformPoint(targetWorld);
             }
-            else
-            {
-                targetLocalPositions[child] = originalLocalPos;
-            }
+            else targetLocalPositions[child] = originalLocalPos;
         }
 
-        // 2. Perform the Lerp
         while (t < duration)
         {
             t += Time.deltaTime;
-            float normalizedTime = t / duration;
-            // Use an easing function for smoother movement
-            float factor = Mathf.SmoothStep(0, 1, normalizedTime);
-
+            float factor = Mathf.SmoothStep(0, 1, t / duration);
             foreach (var kvp in targetLocalPositions)
             {
-                Transform child = kvp.Key;
-                if (child == null) continue;
-
-                Vector3 start = startLocalPositions[child];
-                Vector3 end = kvp.Value;
-                child.localPosition = Vector3.Lerp(start, end, factor);
+                if (kvp.Key == null) continue;
+                kvp.Key.localPosition = Vector3.Lerp(startLocalPositions[kvp.Key], kvp.Value, factor);
             }
             yield return null;
         }
-
         activeRoutine = null;
     }
 
@@ -167,23 +182,17 @@ public class PartExplosionHandler : MonoBehaviour
     {
         foreach (Transform child in transform)
         {
-            // Use ReferenceEquals to safely check against destroyed Unity objects
             if (coreInstance != null && child == coreInstance.transform) continue;
-
             var childPart = child.GetComponent<SelectablePart>();
             if (childPart == null) continue;
 
             var childOutline = child.GetComponent<PartOutlineHandler>();
-            if (explode)
-            {
-                childOutline?.SetColliderActive(true);
-            }
+            if (explode) childOutline?.SetColliderActive(true);
             else
             {
                 childPart.isSelected = false;
                 childOutline?.UpdateVisuals(false);
                 childOutline?.SetColliderActive(false);
-                // Deep collapse
                 child.GetComponent<PartExplosionHandler>()?.ToggleExplosion(false);
             }
         }
@@ -192,7 +201,8 @@ public class PartExplosionHandler : MonoBehaviour
     private Bounds CalculateBounds(Transform obj)
     {
         Renderer[] rs = obj.GetComponentsInChildren<Renderer>();
-        Bounds b = new Bounds(obj.position, Vector3.zero);
+        if (rs.Length == 0) return new Bounds(obj.position, Vector3.zero);
+        Bounds b = new Bounds();
         bool first = true;
         foreach (Renderer r in rs)
         {
